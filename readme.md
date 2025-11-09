@@ -43,7 +43,7 @@ TinyProto/
 
 1. Run the HTTP server:
 ```bash
-go run cmd/httpserver/main.go
+go run cmd/protoserver/main.go
 ```
 
 2. Test with curl:
