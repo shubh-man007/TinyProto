@@ -65,14 +65,20 @@ The server implements HTTP/1.1 by:
 4. Processing request bodies based on Content-Length
 5. Generating and sending HTTP responses
 
-## Testing
+## Testing & Performance
 
 The project includes unit tests for core components:
 - Header parsing and management
 - Request parsing and validation
 - State machine transitions
 
+The project benchmarks can be found in the ```scripts/perf_report.md``` file.
+
 Run tests:
 ```bash
 go test ./internal/...
+```
+Run performance tests:
+```bash
+./scripts/perf_test.sh
 ```
