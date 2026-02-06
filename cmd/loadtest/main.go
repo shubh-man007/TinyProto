@@ -20,7 +20,7 @@ func main() {
 	var wg sync.WaitGroup
 	sem := make(chan struct{}, concurrency)
 
-	for i := 0; i < totalRequests; i++ {
+	for range totalRequests {
 		wg.Add(1)
 		sem <- struct{}{}
 
@@ -66,4 +66,3 @@ func main() {
 	fmt.Printf("Average Latency: %v\n", avgLatency)
 	fmt.Printf("Concurrency: %d\n", concurrency)
 }
-
