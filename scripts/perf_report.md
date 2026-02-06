@@ -1,4 +1,4 @@
-## TinyProto Performance Metrics Report
+## Report
 
 ### Code Metrics
 
@@ -6,9 +6,9 @@
 - **Test Coverage (internal packages)**:
   - `internal/headers/headers.go`: **86.2%**
   - `internal/request/request.go`: **85.5%**
-  - `internal/response/response.go`: **0.0%**
-  - `internal/server/server.go`: **0.0%**
-- **Overall Internal Coverage**: **38.7% of statements** (driven down by untested `response` and `server` packages).
+  - `internal/response/response.go`: **77.3%**
+  - `internal/server/server.go`: **77.1%**
+- **Overall Internal Coverage**: **81.5% of statements** (driven down by untested `response` and `server` packages).
 - **Average Cyclomatic Complexity** (from `gocyclo -avg -top 10 .`): **3.81**
   - Most complex functions:
     - `main.RequestPath` (`cmd/protoserver/main.go`): complexity 17
@@ -35,10 +35,6 @@ Results:
   - **2442 ns/op**
   - **784 B/op**
   - **24 allocs/op**
-
-Interpretation:
-
-- Header and request parsing complete in the low-microsecond range with sub‑1 KB allocation per request, which is efficient for a from-scratch HTTP/1.1 implementation with clear, non-zero-copy code.
 
 #### Load Testing with wrk
 
@@ -79,7 +75,7 @@ Results:
 Interpretation:
 
 - At **moderate concurrency (100 connections)**, TinyProto sustains **≈3.2k RPS** with a **good median latency (~13 ms)** and a moderate tail (p99 ~174 ms).
-- At **high concurrency (1000 connections)**, throughput increases to **≈5.7k RPS**, but latency degrades significantly (p50 ≈150 ms, p99 ≈440 ms), which is expected for a simple, single-process server under heavy contention.
+- At **high concurrency (1000 connections)**, throughput increases to **≈5.7k RPS**, but latency degrades significantly (p50 ≈150 ms, p99 ≈440 ms).
 
 #### Custom Concurrent Load Test
 
@@ -100,19 +96,3 @@ Results:
 Interpretation:
 
 - The custom client’s average latency at concurrency 100 (~13.4 ms) closely matches the wrk p50 (12.75 ms), confirming that for the basic HTML endpoint TinyProto can sustain **≈7.2–7.3k RPS at 100 concurrent clients with low double‑digit millisecond latency and no observed application errors**.
-
-### Static Analysis
-
-- **go vet (`go vet ./...`)**:
-  - Runs clean with no reported issues.
-- **staticcheck**:
-  - Version: `staticcheck 2025.1.1 (0.6.1)`.
-  - With a compatible Go toolchain, staticcheck can be used regularly; it did not surface structural issues beyond what golangci-lint reports.
-- **golangci-lint**:
-  - Version: `golangci-lint 2.8.0`.
-  - Notable findings:
-    - Unchecked error returns from several network writes, including:
-      - `conn.Write` in `cmd/nettest/udpsender/main.go`.
-      - `herr.WriteErrorResponse(conn)` in `internal/server/server.go`.
-      - Multiple calls to `w.WriteStatusLine`, `w.WriteHeaders`, `w.WriteBody`, and `w.WriteTrailers` in `cmd/protoserver/main.go`, particularly in the `/video` and `/httpbin/stream...` paths.
-  - These are robustness issues rather than immediate correctness bugs; handling these errors explicitly would improve observability and resilience under adverse network conditions.
