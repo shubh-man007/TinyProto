@@ -72,7 +72,7 @@ The project includes unit tests for core components:
 - Request parsing and validation
 - State machine transitions
 
-The project benchmarks can be found in the ```scripts/perf_report.md``` file.
+Performance related details are present in the ```scripts/perf_report.md``` file.
 
 Run tests:
 ```bash
